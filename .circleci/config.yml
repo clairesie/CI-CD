@@ -21,6 +21,9 @@ jobs:
     steps:
       - checkout:
           path: ~/project/
+       - run:
+          name: Check directory
+          command: ls -l
       - node/install:
           node-version: '20.9'
       - run: node --version 
