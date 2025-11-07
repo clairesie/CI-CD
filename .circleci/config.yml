@@ -21,7 +21,7 @@ jobs:
     steps:
       - checkout:
           path: ~/project/
-       - run:
+      - run:
           name: Check directory
           command: ls -l
       - node/install:
