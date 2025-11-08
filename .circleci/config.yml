@@ -9,20 +9,27 @@ defaults: &defaults
 
 jobs:
   deploy_app_to_railway:
-    <<: *defaults
+    docker:
+      - image: cimg/python:3.10
+    working_directory: ~/project
     steps:
-      - checkout:
-          path: ~/project/
+      - checkout
       - node/install:
           node-version: '20.9'
-      - run: node --version 
-      - run: npm i -g @railway/cli
       - run:
-          name: Deploy to Railway App
+          name: Node version
+          command: node --version
+      - run:
+          name: Instalar Railway CLI
+          command: npm i -g @railway/cli
+      - run:
+          name: Desplegar API en Railway
           command: |
             cd bankchurn-api
             railway up --service=victorious-gratitude
             railway up --detach
+
+
 
 tags_only: &tags_only
   filters:
