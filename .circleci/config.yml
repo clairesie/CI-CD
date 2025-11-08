@@ -1,26 +1,42 @@
-version: 2.1
+version: '2.1'
+orbs:
+  node: circleci/node@5.1.0
+
+defaults: &defaults
+  docker:
+    - image: cimg/python:3.10
+  working_directory: ~/project
 
 jobs:
-  build-and-deploy:
-    docker:
-      - image: cimg/python:3.9
+  deploy_app_to_railway:
+    <<: *defaults
     steps:
-      - checkout
+      - checkout:
+          path: ~/project/
+      - node/install:
+          node-version: '20.9'
+      - run: node --version 
+      - run: npm i -g @railway/cli
       - run:
-          name: Instalar Railway
-          command: |
-            npm install -g @railway/cli
-      - run:
-          name: Login Railway (browserless)
-          command: |
-            railway login --browserless <<< $RAILWAY_TOKEN
-      - run:
-          name: Desplegar API en Railway
+          name: Deploy to Railway App
           command: |
             cd bankchurn-api
-            railway up --service=CI-CD --detach
+            railway up --service=victorious-gratitude
+            railway up --detach
+
+tags_only: &tags_only
+  filters:
+    branches:
+      ignore: /.*/
+    tags:
+      only: /^.*/
 
 workflows:
-  build-and-test:
+  version: 2
+  deploy_pipeline:
     jobs:
-      - build-and-deploy
+      - deploy_app_to_railway:
+          filters:
+            branches:
+              only:
+                - main
